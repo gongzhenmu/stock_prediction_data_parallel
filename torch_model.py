@@ -254,6 +254,7 @@ def predict_file(file_name, day_in, day_out):
     else:
         print("Using CPU")
     print("----------------------------------------------------")
+    time.sleep(2)
     df = pd.read_csv(file_name)
 
     close_prices = df["Close"]
