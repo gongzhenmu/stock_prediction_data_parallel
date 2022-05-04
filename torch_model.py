@@ -12,6 +12,7 @@ from blitz.utils import variational_estimator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import time
+import sys
 
 
 
@@ -345,7 +346,24 @@ def predict_file(file_name, day_in, day_out):
 if __name__ == "__main__":
     price, price_high, price_low = [], [], []
 
-    price= predict_file('data/AMZN.csv', 2000, 10)
+    print(f"Arguments count: {len(sys.argv)}")
+    if len(sys.argv) > 4:
+        print("too many arguments")
+    filename = ""
+    day_in = 2000
+    day_out = 30
+    for i, arg in enumerate(sys.argv):
+        if i ==1:
+            filename = arg
+        elif i == 2:
+            day_in= int(arg)
+        elif i == 3:
+            day_out = int(arg)
+    price = predict_file(filename,day_in,day_out)
+            
+        
+        
+    # price= predict_file('data/AMZN.csv', 2000, 30)
 
     print(price)
     
