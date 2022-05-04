@@ -347,9 +347,9 @@ if __name__ == "__main__":
     price, price_high, price_low = [], [], []
 
     print(f"Arguments count: {len(sys.argv)}")
-    if len(sys.argv) > 4:
-        print("too many arguments")
-    filename = ""
+    if len(sys.argv) > 4 | len(sys.argv) < 3:
+        print("too many/few arguments")
+    filename = "data/AMZN.csv"
     day_in = 2000
     day_out = 30
     for i, arg in enumerate(sys.argv):
