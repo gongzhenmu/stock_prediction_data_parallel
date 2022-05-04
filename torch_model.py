@@ -11,6 +11,7 @@ from blitz.utils import variational_estimator
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import time
 
 
 
@@ -281,6 +282,7 @@ def predict_file(file_name, day_in, day_out):
     
 
     # Train the model
+    start = time.time()
     iteration = 0
     for epoch in range(10):
         for i, (datapoints, labels) in enumerate(dataloader_train):
@@ -297,13 +299,13 @@ def predict_file(file_name, day_in, day_out):
                 loss = net.module.sample_elbo(inputs=datapoints,
                                     labels=labels,
                                     criterion=criterion,
-                                    sample_nbr=3,
+                                    sample_nbr=1,
                                     complexity_cost_weight=1/X_train.shape[0])
             else:
                 loss = net.sample_elbo(inputs=datapoints,
                                     labels=labels,
                                     criterion=criterion,
-                                    sample_nbr=3,
+                                    sample_nbr=1,
                                     complexity_cost_weight=1/X_train.shape[0])
             loss.backward()
             optimizer.step()
@@ -317,16 +319,19 @@ def predict_file(file_name, day_in, day_out):
                 
                 preds_test = net(X_test.to(device))[:,0].unsqueeze(1)
                 loss_test = criterion(preds_test, y_test.to(device))
+                print("--------------------------------------------------")
                 print("Iteration: {} Val-loss: {:.4f}".format(str(iteration), loss_test))
-
+                print("--------------------------------------------------")
     future_length=7
     sample_nbr=4
     ci_multiplier=5
     idx_pred, preds_test = pred_stock_future(X_test, future_length, sample_nbr)
     pred_mean_unscaled, upper_bound_unscaled, lower_bound_unscaled = get_confidence_intervals(preds_test,
                                                                                             ci_multiplier)
-
-
+    end = time.time()
+    print("---------------------------------------------------------")
+    print("Using ",device, "---gpu count (for gpu only)= ", torch.cuda.device_count(),"elapsed time = ",end-start)
+    print("---------------------------------------------------------")
     def convertToList(npArray):
         result = []
         for i in npArray:
@@ -340,5 +345,6 @@ if __name__ == "__main__":
     price, price_high, price_low = [], [], []
 
     price= predict_file('data/AMZN.csv', 2000, 10)
+
     print(price)
     
