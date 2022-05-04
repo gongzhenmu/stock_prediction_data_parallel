@@ -12,7 +12,7 @@ from blitz.utils import variational_estimator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-import matplotlib.pyplot as plt
+
 
 from collections import deque
 def convertToDf(stockList):
