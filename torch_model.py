@@ -330,8 +330,5 @@ if __name__ == "__main__":
     price, price_high, price_low = [], [], []
 
     price= predict_file('data/AMZN.csv', 2000, 10)
-    # print(price)
-    for i in range (0, 3):
-        print(price[i])
-        print(price_high[i][0])
-        print(price_low[i][0])
+    print(price)
+    
