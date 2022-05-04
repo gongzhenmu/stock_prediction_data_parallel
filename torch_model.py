@@ -15,6 +15,9 @@ from sklearn.preprocessing import StandardScaler
 
 
 from collections import deque
+
+
+
 def convertToDf(stockList):
         output=[]
         for i in range(len(stockList)):
@@ -115,7 +118,8 @@ def buy_stock(
     invest = ((initial_money - starting_money) / starting_money) * 100
     total_gains = initial_money - starting_money
     return states_buy, states_sell, total_gains, invest
-    
+
+printSize = False
 @variational_estimator
 class NN(nn.Module):
     def __init__(self):
@@ -124,13 +128,15 @@ class NN(nn.Module):
         self.linear = nn.Linear(10, 1)
             
     def forward(self, x):
-        # print("\tIn Model: input size", x.size())
+        
+        # print("\t input size", x.size())
         x_, _ = self.lstm_1(x)
         
         #gathering only the latent end-of-sequence for the linear layer
         x_ = x_[:, -1, :]
         x_ = self.linear(x_)
-        # print("output size", x_.size())
+        
+        print("input size", x.size() ,"\t output size", x_.size())
         return x_
     
 
@@ -139,7 +145,7 @@ WINDOW_SIZE = 21
 SCALER = StandardScaler()
 X_train, X_test, y_train, y_test = [], [], [], []
 Xs, ys = [], []
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 net = NN()
 if torch.cuda.device_count() > 1:
@@ -303,8 +309,12 @@ def predict_file(file_name, day_in, day_out):
             optimizer.step()
             
             iteration += 1
-            
+            # if(iteration %50 == 0):
+            #     printSize = True
+            # else:
+            #     printSize = False
             if iteration%250==0:
+                
                 preds_test = net(X_test.to(device))[:,0].unsqueeze(1)
                 loss_test = criterion(preds_test, y_test.to(device))
                 print("Iteration: {} Val-loss: {:.4f}".format(str(iteration), loss_test))
